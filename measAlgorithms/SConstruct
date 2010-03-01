@@ -1,0 +1,23 @@
+#! -*- python -*-
+import os
+
+import lsst.SConsUtils as scons
+
+try:
+    env = scons.makeEnv(
+        "experiments",
+        r"$HeadURL$",
+        [
+        ["boost", "boost/version.hpp", "boost_system:C++"],
+        #["utils", "lsst/tr1/unordered_map.h"],
+        ])
+except KeyError:
+    env = Environment()
+    env.Append(CCFLAGS = ["-g",])
+    env.Append(CCFLAGS = ["-O3",])
+
+    env["CXX"] = 'icpc -wd193,383,981,1418,1419'
+
+env.Program("measure", ["measure.cc", "Schema.cc", "Photometry.cc"] +
+            ["AperturePhotometry.cc", "ModelPhotometry.cc", "PsfPhotometry.cc"])
+

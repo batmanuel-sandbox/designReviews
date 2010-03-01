@@ -1,0 +1,5 @@
+syntax: glob
+.sconf_temp
+.sconsign.dblite
+config.log
+measure
