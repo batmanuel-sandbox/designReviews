@@ -60,6 +60,15 @@ namespace {
     };
 
     template<typename M>
+    struct writeUnits {
+        writeUnits(std::string const&, Schema const& se, M const&) : _se(se) {}
+        std::string operator()(int= -1) {
+            return _se.getUnits();
+        }
+        Schema const& _se;
+    };
+
+    template<typename M>
     struct writeData {
         writeData(std::string const&, Schema const& se, M const& m) : _se(se), _m(m) {}
         std::string operator()(int i=-1) {
@@ -120,10 +129,8 @@ void writeCsv(std::vector<Source::Ptr> values,
         return;
     }
 
-    
     std::ofstream fs;
     std::ostream &fd = (filename == "") ? std::cout : fs;
-
     if (filename != "") {
         fs.open(filename.c_str());
     }
@@ -133,6 +140,11 @@ void writeCsv(std::vector<Source::Ptr> values,
         writeCsv<writeHeader<Measurement<Astrometry> > >(fd, first->getAstrometry());
         fd << ", ";
         writeCsv<writeHeader<Measurement<Photometry> > >(fd, first->getPhotometry());
+        fd << std::endl;
+
+        writeCsv<writeUnits<Measurement<Astrometry> > >(fd, first->getAstrometry());
+        fd << ", ";
+        writeCsv<writeUnits<Measurement<Photometry> > >(fd, first->getPhotometry());
         fd << std::endl;
     }
     
