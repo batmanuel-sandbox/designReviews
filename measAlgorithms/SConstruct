@@ -18,6 +18,8 @@ except KeyError:
 
     env["CXX"] = 'icpc -wd193,383,981,1418,1419'
 
-env.Program("measure", ["measure.cc", "Schema.cc", "Photometry.cc"] +
-            ["AperturePhotometry.cc", "ModelPhotometry.cc", "PsfPhotometry.cc"])
+env.Program("measure", ["measure.cc", "Schema.cc", "Source.cc"] +
+            ["Photometry.cc"] + ["AperturePhotometry.cc", "ModelPhotometry.cc", "PsfPhotometry.cc"] +
+            ["NaiveAstrometry.cc"],
+            )
 

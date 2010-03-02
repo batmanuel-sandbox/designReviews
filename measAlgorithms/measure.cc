@@ -1,6 +1,7 @@
 // -*- lsst-c++ -*-
 #include <iostream>
 
+#include "Source.h"
 #include "Schema.h"
 #include "Measurement.h"
 #include "Photometry.h"
@@ -13,21 +14,30 @@
 // Usage: ./main type [type ...]  where type is one of "aper", "psf", and "model"
 //
 int main(int argc, char **argv) {
-    // Create our measuring object based on argv
-    MeasurePhotometry *w = new MeasurePhotometry();
+    // Create our astrometric measuring object
+    MeasureAstrometry *measureAstro = new MeasureAstrometry();
+    measureAstro->addAlgorithm("naive");
+
+    // Create our photometric measuring object based on argv
+    MeasurePhotometry *measurePhoto = new MeasurePhotometry();
     
     for (int i = 1; i != argc; ++i) {
-        w->addAlgorithm(argv[i]);
+        measurePhoto->addAlgorithm(argv[i]);
     }
     // Measure the data and retrieve the answers
     Image im = 1.0;
-    MeasurePhotometry::Values v = w->measure(im);
+    Source s;
+    s.setAstrometry(measureAstro->measure(im));
+    s.setPhotometry(measurePhoto->measure(im));
+    Measurement<Photometry> const& v = s.getPhotometry();
 
     im = 10;
-    MeasurePhotometry::Values v2 = w->measure(im);
+    Source s2;
+    s2.setAstrometry(measureAstro->measure(im));
+    s2.setPhotometry(measurePhoto->measure(im));
 
-    std::cout << v << std::endl;
-    std::cout << v2 << std::endl;
+    std::cout << s << std::endl;
+    std::cout << s2 << std::endl;
     std::cout << std::endl;
     //
     // Subclasses of Photometry need a cast to use the accessors that aren't in the base class
