@@ -31,16 +31,18 @@ int main(int argc, char **argv) {
     std::vector<Source::Ptr> sources;
 
     Source::Ptr s = boost::make_shared<Source>();
-    s->setAstrometry(measureAstro->measure(im));
-    s->setPhotometry(measurePhoto->measure(im));
+    float x = 10, y = 20;
+    s->setAstrometry(measureAstro->measure(im, x, y));
+    s->setPhotometry(measurePhoto->measure(im, x, y));
     sources.push_back(s);
 
     Measurement<Photometry> const& v = s->getPhotometry();
 
     im = 10;
+    x = 20, y = 100;
     Source::Ptr s2 = boost::make_shared<Source>();
-    s2->setAstrometry(measureAstro->measure(im));
-    s2->setPhotometry(measurePhoto->measure(im));
+    s2->setAstrometry(measureAstro->measure(im, x, y));
+    s2->setPhotometry(measurePhoto->measure(im, x, y));
     sources.push_back(s2);
 
     std::cout << *s << std::endl;

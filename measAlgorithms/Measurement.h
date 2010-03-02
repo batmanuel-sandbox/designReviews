@@ -103,12 +103,14 @@ public:
         _algorithms[name] = _lookupAlgorithm(name)();
     }
     /// Actually measure im using all requested algorithms, returning the result
-    Values measure(ImageT const& im     // the Image (or other object) to process
+    Values measure(ImageT const& im,    ///< the Image (or other object) to process
+                   float x,             ///< approximate column centre of object
+                   float y              ///< approximate row centre of object
                   ) {
         Values values;
 
         for (typename AlgorithmList::iterator ptr = _algorithms.begin(); ptr != _algorithms.end(); ++ptr) {
-            T val = ptr->second->doMeasure(im);
+            T val = ptr->second->doMeasure(im, x, y);
             val->getSchema()->setComponent(ptr->first); // name this type of measurement (e.g. psf)
             values.add(val);
         }
@@ -139,7 +141,7 @@ private:
     //
     // Can't be pure virtual as we create a do-nothing MeasureQuantity which we then add to
     //
-    virtual T doMeasure(ImageT const&) {
+    virtual T doMeasure(ImageT const&, float /* x */, float /* y */) {
         return T();
     }
 };

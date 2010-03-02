@@ -15,7 +15,7 @@ PHOTOMETRY_BOILERPLATE("aper", Aperture)
 /**
  * Process the image; calculate values
  */
-Photometry::Ptr ApertureMeasurePhotometry::doMeasure(Image const& im) {
+Photometry::Ptr ApertureMeasurePhotometry::doMeasure(Image const& im, float, float) {
     /// Measure your flux here
     return boost::make_shared<AperturePhotometry>(6.66, im, 0.1);
 }

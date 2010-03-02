@@ -87,6 +87,6 @@ public:
  * Define a macro to provide all the per-algorithm boilerplate
  */
 #define ASTROMETRY_BOILERPLATE(NAME, ALG) \
-    MEASUREMENT_BOILERPLATE(Astrometry, NAME, ALG, (Image const& im))
+    MEASUREMENT_BOILERPLATE(Astrometry, NAME, ALG, (Image const& im, float x, float y))
 
 #endif
