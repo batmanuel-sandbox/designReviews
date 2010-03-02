@@ -1,6 +1,7 @@
 #if !defined(OUTPUT_H)
 #define OUTPUT_H 1
 
+#include <fstream>
 #include "Measurement.h"
 #include "Source.h"
 
@@ -77,7 +78,7 @@ namespace {
     };
 }
 
-template<typename What, typename M>
+template<typename outputMethod, typename M>
 void writeCsv(
               std::ostream &fd,
               M const& v
@@ -91,17 +92,17 @@ void writeCsv(
         }
         for (Schema::const_iterator sptr = sch.begin(); sptr != sch.end(); ++sptr) {
             Schema const& se = *(*sptr);
-            What getSomething(sch.getComponent(), se, **vptr);
+            outputMethod output(sch.getComponent(), se, **vptr);
 
             if (se.isArray()) {
                 for (int i = 0; i != se.getDimen(); ++i) {
-                    fd << getSomething(i);
+                    fd << output(i);
                     if (i != se.getDimen() - 1) {
                         fd << ", ";
                     }
                 }
             } else {
-                fd << getSomething();
+                fd << output();
             }
 
             if (sptr != sch.end() - 1) {
@@ -119,7 +120,13 @@ void writeCsv(std::vector<Source::Ptr> values,
         return;
     }
 
-    std::ostream &fd = (filename == "") ? std::cout : std::cerr;
+    
+    std::ofstream fs;
+    std::ostream &fd = (filename == "") ? std::cout : fs;
+
+    if (filename != "") {
+        fs.open(filename.c_str());
+    }
 
     {
         Source::ConstPtr first = *(values.begin());
