@@ -1,5 +1,5 @@
-#if !defined(TABLE_H)
-#define TABLE_H 1
+#if !defined(OUTPUT_H)
+#define OUTPUT_H 1
 
 #include "Measurement.h"
 #include "Source.h"

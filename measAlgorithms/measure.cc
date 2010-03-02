@@ -6,7 +6,7 @@
 #include "Measurement.h"
 #include "Photometry.h"
 #include "Image.h"
-#include "Table.h"
+#include "Output.h"
 
 #include "AperturePhotometry.h"
 
