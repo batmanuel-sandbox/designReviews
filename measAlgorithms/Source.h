@@ -7,6 +7,9 @@
 
 class Source {
 public:
+    typedef boost::shared_ptr<Source> Ptr;
+    typedef boost::shared_ptr<Source const> ConstPtr;
+
     Source() {}
 
     void setAstrometry(Measurement<Astrometry> const& astrom) { _astrom = astrom; }

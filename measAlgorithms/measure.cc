@@ -27,18 +27,24 @@ int main(int argc, char **argv) {
     }
     // Measure the data and retrieve the answers
     Image im = 1.0;
-    Source s;
-    s.setAstrometry(measureAstro->measure(im));
-    s.setPhotometry(measurePhoto->measure(im));
-    Measurement<Photometry> const& v = s.getPhotometry();
+
+    std::vector<Source::Ptr> sources;
+
+    Source::Ptr s = boost::make_shared<Source>();
+    s->setAstrometry(measureAstro->measure(im));
+    s->setPhotometry(measurePhoto->measure(im));
+    sources.push_back(s);
+
+    Measurement<Photometry> const& v = s->getPhotometry();
 
     im = 10;
-    Source s2;
-    s2.setAstrometry(measureAstro->measure(im));
-    s2.setPhotometry(measurePhoto->measure(im));
+    Source::Ptr s2 = boost::make_shared<Source>();
+    s2->setAstrometry(measureAstro->measure(im));
+    s2->setPhotometry(measurePhoto->measure(im));
+    sources.push_back(s2);
 
-    std::cout << s << std::endl;
-    std::cout << s2 << std::endl;
+    std::cout << *s << std::endl;
+    std::cout << *s2 << std::endl;
     std::cout << std::endl;
     //
     // Subclasses of Photometry need a cast to use the accessors that aren't in the base class
@@ -60,8 +66,12 @@ int main(int argc, char **argv) {
     std::cout << std::endl << std::endl;
 #endif
     //
-    // Return everything using the schema
+    // Write out the first Source, using the schema
     //
-    writeTable(s.getAstrometry());
-    writeTable(s.getPhotometry());
+    showFromSchema(*(*sources.begin()));
+    std::cout << std::endl;
+    //
+    // Write a csv file containing all our measurements, using the schema
+    //
+    writeCsv(sources, "");
 }
