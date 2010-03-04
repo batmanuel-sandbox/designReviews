@@ -16,8 +16,16 @@ PHOTOMETRY_BOILERPLATE("aper", Aperture)
  * Process the image; calculate values
  */
 Photometry::Ptr ApertureMeasurePhotometry::doMeasure(Image const& im, float, float) {
-    /// Measure your flux here
-    return boost::make_shared<AperturePhotometry>(6.66, im, 0.1);
+    /// Measure your fluxes here
+    std::vector<float> rad(AperturePhotometry::NRADIUS);
+    std::vector<double> flux(AperturePhotometry::NRADIUS);
+    std::vector<float> fluxErr(AperturePhotometry::NRADIUS);
+
+    rad[0] =       6.66; flux[0] = im;     fluxErr[0] = -1;
+    rad[1] = rad[0] + 1; flux[1] = 1.1*im; fluxErr[1] = -1;
+    rad[2] = rad[1] + 1; flux[2] = 1.2*im; fluxErr[2] = -1;
+
+    return boost::make_shared<AperturePhotometry>(rad, flux, fluxErr);
 }
 
 /************************************************************************************************************/

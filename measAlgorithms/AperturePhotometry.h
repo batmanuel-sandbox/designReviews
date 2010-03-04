@@ -15,8 +15,10 @@
 
 class AperturePhotometry : public PhotometryImpl<AperturePhotometry>
 {
-    /// We need a new, unused, index to save the radius in.  [0, Photometry::NVALUE) are already taken
+public:
     enum { NRADIUS = 3 };               // dimension of RADIUS array
+private:
+    /// We need a new, unused, index to save the radius in.  [0, Photometry::NVALUE) are already taken
     enum { FLUX=Photometry::FLUX,
            FLUX_ERR = FLUX     + NRADIUS,
            RADIUS   = FLUX_ERR + NRADIUS,
@@ -26,12 +28,16 @@ public:
     typedef boost::shared_ptr<AperturePhotometry const> ConstPtr;
 
     /// Create an AperturePhotometry to record our measurements
-    AperturePhotometry(float radius, double flux, float fluxErr) {
+    AperturePhotometry(std::vector<float> const& radius,
+                       std::vector<double> const& flux,
+                       std::vector<float> const& fluxErr) {
         init();                         // This allocates space for everything in the schema
+
+        assert(radius.size() == NRADIUS);
         for (int i = 0; i != NRADIUS; ++i) {
-            set<RADIUS>(i, radius + i);
-            set<FLUX>(i, flux + 0.1*i);
-            set<FLUX_ERR>(i, static_cast<float>(fluxErr + 0.2*i)); // must match type in the schema
+            set<RADIUS>(i, radius[i]);
+            set<FLUX>(i, flux[i]);
+            set<FLUX_ERR>(i, fluxErr[i]);
         }
     }
 
