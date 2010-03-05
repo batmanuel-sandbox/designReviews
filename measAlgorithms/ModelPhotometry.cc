@@ -45,7 +45,7 @@ PHOTOMETRY_BOILERPLATE("model", Model)
 /**
  * Process the image; calculate values
  */
-Photometry::Ptr ModelMeasurePhotometry::doMeasure(Image const& im, float, float) {
+Photometry::Ptr ModelMeasurePhotometry::doMeasure(Image const& im, Peak const&) {
     // Burn CPU time here
     return boost::make_shared<ModelPhotometry>(2*im, 0.2);
 }

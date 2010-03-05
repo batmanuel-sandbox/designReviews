@@ -15,7 +15,7 @@ PHOTOMETRY_BOILERPLATE("aper", Aperture)
 /**
  * Process the image; calculate values
  */
-Photometry::Ptr ApertureMeasurePhotometry::doMeasure(Image const& im, float, float) {
+Photometry::Ptr ApertureMeasurePhotometry::doMeasure(Image const& im, Peak const&) {
     /// Measure your fluxes here
     std::vector<float> rad(AperturePhotometry::NRADIUS);
     std::vector<double> flux(AperturePhotometry::NRADIUS);

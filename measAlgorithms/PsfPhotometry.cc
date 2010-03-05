@@ -30,7 +30,7 @@ PHOTOMETRY_BOILERPLATE("psf", Psf)
 /**
  * Process the image; calculate values
  */
-Photometry::Ptr PsfMeasurePhotometry::doMeasure(Image const& im, float, float) {
+Photometry::Ptr PsfMeasurePhotometry::doMeasure(Image const& im, Peak const&) {
     // Here is the real work, hiding in a comment
     return boost::make_shared<PsfPhotometry>(3*im);
 }

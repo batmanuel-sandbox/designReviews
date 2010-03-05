@@ -4,6 +4,7 @@
 #include <map>
 #include "boost/make_shared.hpp"
 
+#include "Peak.h"
 #include "Schema.h"
 
 /************************************************************************************************************/
@@ -104,13 +105,12 @@ public:
     }
     /// Actually measure im using all requested algorithms, returning the result
     Values measure(ImageT const& im,    ///< the Image (or other object) to process
-                   float x,             ///< approximate column centre of object
-                   float y              ///< approximate row centre of object
+                   Peak const& peak     ///< approximate position of object's centre
                   ) {
         Values values;
 
         for (typename AlgorithmList::iterator ptr = _algorithms.begin(); ptr != _algorithms.end(); ++ptr) {
-            T val = ptr->second->doMeasure(im, x, y);
+            T val = ptr->second->doMeasure(im, peak);
             val->getSchema()->setComponent(ptr->first); // name this type of measurement (e.g. psf)
             values.add(val);
         }
@@ -141,7 +141,7 @@ private:
     //
     // Can't be pure virtual as we create a do-nothing MeasureQuantity which we then add to
     //
-    virtual T doMeasure(ImageT const&, float /* x */, float /* y */) {
+    virtual T doMeasure(ImageT const&, Peak const&) {
         return T();
     }
 };

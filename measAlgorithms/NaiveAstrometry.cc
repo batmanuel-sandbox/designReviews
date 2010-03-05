@@ -32,7 +32,7 @@ ASTROMETRY_BOILERPLATE("naive", Naive)
 /**
  * Process the image; calculate values
  */
-Astrometry::Ptr NaiveMeasureAstrometry::doMeasure(Image const&, float x, float y) {
+Astrometry::Ptr NaiveMeasureAstrometry::doMeasure(Image const&, Peak const& peak) {
     // Here is the real work, hiding in a comment
-    return boost::make_shared<NaiveAstrometry>(x, 0.0, y, 0.0);
+    return boost::make_shared<NaiveAstrometry>(peak.getX(), 0.0, peak.getY(), 0.0);
 }

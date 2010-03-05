@@ -79,6 +79,6 @@ public:
  * Define a macro to provide all the per-algorithm boilerplate
  */
 #define PHOTOMETRY_BOILERPLATE(NAME, ALG) \
-    MEASUREMENT_BOILERPLATE(Photometry, NAME, ALG, (Image const& im, float x, float y))
+    MEASUREMENT_BOILERPLATE(Photometry, NAME, ALG, (Image const& im, Peak const& peak))
 
 #endif
