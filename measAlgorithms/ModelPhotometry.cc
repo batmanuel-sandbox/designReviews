@@ -1,6 +1,5 @@
 // -*- lsst-c++ -*-
 #include "Photometry.h"
-#include "MeasurementData.h"
 
 namespace {                             // N.b. none of this implementation need be globally visible
 /************************************************************************************************************/
@@ -8,7 +7,7 @@ namespace {                             // N.b. none of this implementation need
  * Implement model fit photometry.  We include the sersic index in the schema, but don't provide
  * an accessor function
  */
-class ModelPhotometry : public PhotometryImpl<ModelPhotometry>
+class ModelPhotometry : public Photometry
 {
     /// We need a new, unused, index to save the Sersic index in.  [0, Photometry::NVALUE) are already taken
     enum { SERSIC_N=Photometry::NVALUE, NVALUE };
@@ -25,7 +24,7 @@ public:
     }
 
     /// Add desired fields to the schema
-    static void defineSchema(Schema::Ptr schema ///< our schema; == ModelPhotometry::_mySchema
+    virtual void defineSchema(Schema::Ptr schema ///< our schema; == ModelPhotometry::_mySchema
                       ) {
         Photometry::defineSchema(schema);
         schema->add(SchemaEntry("sersic_n", SERSIC_N, Schema::INT));
@@ -34,7 +33,7 @@ public:
     /// Virtual function called by operator<< to dynamically dispatch the type to a stream
     std::ostream &output(std::ostream &os ///< the output stream
                         ) const {
-        os << "n_s: " << get("sersic_n") << "  ";
+         os << "n_s: " << get("sersic_n") << "  ";
         return Photometry::output(os);
     }
 };

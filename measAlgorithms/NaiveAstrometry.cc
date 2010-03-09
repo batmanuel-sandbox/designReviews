@@ -1,6 +1,5 @@
 // -*- lsst-c++ -*-
 #include "Astrometry.h"
-#include "MeasurementData.h"
 
 /**
  * Implement PSF astrometry.  The astronomical details are left to the reader
@@ -21,8 +20,8 @@ public:
     }
 
     /// Add desired fields to the schema
-    static void defineSchema(Schema::Ptr schema ///< our schema; == _mySchema
-                      ) {
+    virtual void defineSchema(Schema::Ptr schema ///< our schema; == _mySchema
+                             ) {
         Astrometry::defineSchema(schema);
     }
 };

@@ -1,11 +1,10 @@
 // -*- lsst-c++ -*-
 #include "Photometry.h"
-#include "MeasurementData.h"
 
 /**
  * Implement PSF photometry.  The astronomical details are left to the reader
  */
-class PsfPhotometry : public PhotometryImpl<PsfPhotometry>
+class PsfPhotometry : public Photometry
 {
 public:
     typedef boost::shared_ptr<PsfPhotometry> Ptr;
@@ -19,8 +18,8 @@ public:
     }
 
     /// Add desired fields to the schema
-    static void defineSchema(Schema::Ptr schema ///< our schema; == _mySchema
-                      ) {
+    virtual void defineSchema(Schema::Ptr schema ///< our schema; == _mySchema
+                     ) {
         Photometry::defineSchema(schema);
     }
 };

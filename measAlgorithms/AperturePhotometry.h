@@ -2,7 +2,6 @@
 #if !defined(APERTURE_PHOTOMETRY_H)
 #define APERTURE_PHOTOMETRY_H 1
 #include "Photometry.h"
-#include "MeasurementData.h"
 
 /**
  * Implement aperture photometry.  We include the radius in the schema, and also provide
@@ -10,10 +9,10 @@
  */
 #if defined(__ICC)
 #pragma warning (push)
-#pragma warning (disable: 1125)         // "Photometry::XXX" is hidden by "AperturePhotometry::XXX"
+#pragma warning (disable: 654)          // "Photometry::getFlux" is only partially overridden
 #endif
 
-class AperturePhotometry : public PhotometryImpl<AperturePhotometry>
+class AperturePhotometry : public Photometry
 {
 public:
     enum { NRADIUS = 3 };               // dimension of RADIUS array
@@ -42,7 +41,7 @@ public:
     }
 
     /// Add desired fields to the schema
-    static void defineSchema(Schema::Ptr schema ///< our schema; == AperturePhotometry::_mySchema
+    virtual void defineSchema(Schema::Ptr schema ///< our schema; == AperturePhotometry::_mySchema
                       ) {
         schema->add(SchemaEntry("flux",    FLUX,     Schema::DOUBLE, NRADIUS));
         schema->add(SchemaEntry("fluxErr", FLUX_ERR, Schema::FLOAT,  NRADIUS));
