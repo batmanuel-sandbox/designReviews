@@ -27,13 +27,21 @@ public:
     }
 
     /// Return the x-centroid
-    virtual double getX() const = 0;
+    double getX() const {
+        return Measurement<Astrometry>::get<Astrometry::X, double>();
+    }
     /// Return the error in the x-centroid
-    virtual float getXErr() const = 0;
+    float getXErr() const {
+        return Measurement<Astrometry>::get<Astrometry::X_ERR, float>();
+    }
     /// Return the y-centroid
-    virtual double getY() const = 0;
+    double getY() const {
+        return Measurement<Astrometry>::get<Astrometry::Y, double>();
+    }
     /// Return the error in the y-centroid
-    virtual float getYErr() const = 0;
+    float getYErr() const {
+        return Measurement<Astrometry>::get<Astrometry::Y_ERR, float>();
+    }
 
     virtual std::ostream &output(std::ostream &os) const {
         return os << "(" << getX() << "+-" << getXErr() << ", " << getY() << "+-" << getYErr() << ")";
@@ -56,30 +64,6 @@ public:
 };
 
 /************************************************************************************************************/
-/**
- * A class to provide the implement the Astrometry interface, and provide a class containing the data
- */
-template<typename T>
-class AstrometryImpl : public Astrometry {
-public:
-    /// Return the x-centroid
-    virtual double getX() const {
-        return Measurement<Astrometry>::template get<Astrometry::X, double>();
-    }
-    /// Return the error in the x-centroid
-    virtual float getXErr() const {
-        return Measurement<Astrometry>::template get<Astrometry::X_ERR, float>();
-    }
-    /// Return the y-centroid
-    virtual double getY() const {
-        return Measurement<Astrometry>::template get<Astrometry::Y, double>();
-    }
-    /// Return the error in the y-centroid
-    virtual float getYErr() const {
-        return Measurement<Astrometry>::template get<Astrometry::Y_ERR, float>();
-    }
-};
-
 /*
  * Define a macro to provide all the per-algorithm boilerplate
  */

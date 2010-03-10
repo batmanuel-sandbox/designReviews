@@ -4,7 +4,7 @@
 /**
  * Implement PSF astrometry.  The astronomical details are left to the reader
  */
-class NaiveAstrometry : public AstrometryImpl<NaiveAstrometry>
+class NaiveAstrometry : public Astrometry
 {
 public:
     typedef boost::shared_ptr<NaiveAstrometry> Ptr;
