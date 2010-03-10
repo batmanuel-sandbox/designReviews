@@ -24,6 +24,8 @@ public:
                              ) {
         Astrometry::defineSchema(schema);
     }
+
+    static Astrometry::Ptr doMeasure(Image const& im, Peak const&);
 };
 
 ASTROMETRY_BOILERPLATE("naive", Naive)
@@ -31,7 +33,7 @@ ASTROMETRY_BOILERPLATE("naive", Naive)
 /**
  * Process the image; calculate values
  */
-Astrometry::Ptr NaiveMeasureAstrometry::doMeasure(Image const&, Peak const& peak) {
+Astrometry::Ptr NaiveAstrometry::doMeasure(Image const&, Peak const& peak) {
     // Here is the real work, hiding in a comment
     return boost::make_shared<NaiveAstrometry>(peak.getX(), 0.0, peak.getY(), 0.0);
 }

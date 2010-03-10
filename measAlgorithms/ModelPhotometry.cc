@@ -30,6 +30,8 @@ public:
         schema->add(SchemaEntry("sersic_n", SERSIC_N, Schema::INT));
     }
 
+    static Photometry::Ptr doMeasure(Image const& im, Peak const&);
+
     /// Virtual function called by operator<< to dynamically dispatch the type to a stream
     std::ostream &output(std::ostream &os ///< the output stream
                         ) const {
@@ -44,7 +46,7 @@ PHOTOMETRY_BOILERPLATE("model", Model)
 /**
  * Process the image; calculate values
  */
-Photometry::Ptr ModelMeasurePhotometry::doMeasure(Image const& im, Peak const&) {
+Photometry::Ptr ModelPhotometry::doMeasure(Image const& im, Peak const&) {
     // Burn CPU time here
     return boost::make_shared<ModelPhotometry>(2*im, 0.2);
 }

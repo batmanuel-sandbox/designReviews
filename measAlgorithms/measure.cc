@@ -59,17 +59,19 @@ int main(int argc, char **argv) {
     // Note that we can use get() to return a value as a double given its name;  the accessor
     // functions can use a templated version of get to return the true type
     //
-    Photometry::Ptr photom = *v.begin();
-    std::cout << "flux: " << photom->getFlux() << " fluxErr: " << photom->get("fluxErr");
+    if (!v.empty()) {
+        Photometry::Ptr photom = *v.begin();
+        std::cout << "flux: " << photom->getFlux() << " fluxErr: " << photom->get("fluxErr");
 #if defined(APERTURE_PHOTOMETRY_H)
-    {
-        AperturePhotometry::Ptr aphotom = boost::dynamic_pointer_cast<AperturePhotometry>(photom);
-
-        if (aphotom) {
-            std::cout << "  Radius: " << aphotom->getRadius(0);
+        {
+            AperturePhotometry::Ptr aphotom = boost::dynamic_pointer_cast<AperturePhotometry>(photom);
+            
+            if (aphotom) {
+                std::cout << "  Radius: " << aphotom->getRadius(0);
+            }
         }
+        std::cout << std::endl << std::endl;
     }
-    std::cout << std::endl << std::endl;
 #endif
     //
     // Write out the first Source, using the schema

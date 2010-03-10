@@ -51,7 +51,8 @@ public:
  * to provide the FactoryPtr typedef, and also to hide MeasureQuantity<Photometry::Ptr, Image>. Note that
  * MeasureQuantity knows nothing about Image classes
  */
-class MeasurePhotometry : public MeasureQuantity<Photometry::Ptr, Image> {
+class MeasurePhotometry : public MeasureQuantity<Photometry::Ptr, Image>
+{
 public:
     typedef boost::shared_ptr<MeasurePhotometry> Ptr;
     typedef MeasureQuantity<Photometry::Ptr, Image> *FactoryPtr;
@@ -65,6 +66,6 @@ public:
  * Define a macro to provide all the per-algorithm boilerplate
  */
 #define PHOTOMETRY_BOILERPLATE(NAME, ALG) \
-    MEASUREMENT_BOILERPLATE(Photometry, NAME, ALG, (Image const& im, Peak const& peak))
+    MEASUREMENT_BOILERPLATE(Photometry, NAME, ALG, (Image const& im, Peak const& peak), (im, peak))
 
 #endif

@@ -25,7 +25,7 @@ public:
         schema->add(SchemaEntry("y", Y, Schema::DOUBLE, 1, "pixel"));
         schema->add(SchemaEntry("yErr", Y_ERR, Schema::FLOAT, 1, "pixel"));
     }
-
+    
     /// Return the x-centroid
     double getX() const {
         return Measurement<Astrometry>::get<Astrometry::X, double>();
@@ -55,7 +55,8 @@ public:
  * to provide the FactoryPtr typedef, and also to hide MeasureQuantity<Astrometry::Ptr, Image>. Note that
  * MeasureQuantity knows nothing about Image classes
  */
-class MeasureAstrometry : public MeasureQuantity<Astrometry::Ptr, Image> {
+class MeasureAstrometry : public MeasureQuantity<Astrometry::Ptr, Image>
+{
 public:
     typedef boost::shared_ptr<MeasureAstrometry> Ptr;
     typedef MeasureQuantity<Astrometry::Ptr, Image> *FactoryPtr;
@@ -68,6 +69,6 @@ public:
  * Define a macro to provide all the per-algorithm boilerplate
  */
 #define ASTROMETRY_BOILERPLATE(NAME, ALG) \
-    MEASUREMENT_BOILERPLATE(Astrometry, NAME, ALG, (Image const& im, Peak const& peak))
+    MEASUREMENT_BOILERPLATE(Astrometry, NAME, ALG, (Image const& im, Peak const& peak), (im, peak))
 
 #endif

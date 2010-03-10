@@ -27,6 +27,10 @@ public:
     Measurement() : _measuredValues(), _mySchema(new Schema) { }
     virtual ~Measurement() {}
 
+    /// Are there any known algorithms?
+    bool empty() const {
+        return _measuredValues.empty();
+    }
     /// Return an iterator to the start of the set
     iterator begin() {
         return _measuredValues.begin();
@@ -355,20 +359,19 @@ MeasureQuantity<T, ImageT>::_lookupAlgorithm(std::string const& name)
  * Provide the boilerplate required to support measuring quantities using a variety of algorithms
  *
  * Arguments are:
- *  @param QUANTITY         Class that is to be measured; e.g. Photometry
- *  @param NAME             Name of algorithm; e.g. "model"
- *  @param ALG              Name of class is ALG##QUANTITY; e.g. Model
- *  @param DO_MEASURE_ARGS  Arguments of the doMeasure member, including parens; e.g. (Image const& im)
+ *  @param QUANTITY              Class that is to be measured; e.g. Photometry
+ *  @param NAME                  Name of algorithm; e.g. "model"
+ *  @param ALG                   Name of class is ALG##QUANTITY; e.g. Model
+ *  @param DO_MEASURE_TYPE_ARGS  Types/args s of the doMeasure member, including parens; e.g. (Image const& im)
+ *  @param DO_MEASURE_ARGS       Arguments of the doMeasure member, including parens; e.g. (im)
  */
-#define MEASUREMENT_BOILERPLATE(QUANTITY, NAME, ALG, DO_MEASURE_ARGS) \
+#define MEASUREMENT_BOILERPLATE(QUANTITY, NAME, ALG, DO_MEASURE_TYPE_ARGS, DO_MEASURE_ARGS) \
 /** */ \
-/* Measure ALG##QUANTITY.  The real work is done by the doMeasure function */ \
+/* Measure ALG##QUANTITY.  The real work is done by ALG##QUANTITY::doMeasure function */ \
 /* */ \
 class ALG##Measure##QUANTITY : public Measure##QUANTITY { \
-public: \
-    ALG##Measure##QUANTITY() :  Measure##QUANTITY() {} \
 protected: \
-    virtual QUANTITY::Ptr doMeasure DO_MEASURE_ARGS; \
+    QUANTITY::Ptr doMeasure DO_MEASURE_TYPE_ARGS { return ALG##QUANTITY::doMeasure DO_MEASURE_ARGS; } \
 }; \
  \
 /** */ \
