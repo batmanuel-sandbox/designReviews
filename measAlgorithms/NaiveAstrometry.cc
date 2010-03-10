@@ -1,8 +1,9 @@
 // -*- lsst-c++ -*-
 #include "Astrometry.h"
 
+namespace {
 /**
- * Implement PSF astrometry.  The astronomical details are left to the reader
+ * Implement Naive astrometry.  The astronomical details are left to the reader
  */
 class NaiveAstrometry : public Astrometry
 {
@@ -28,12 +29,19 @@ public:
     static Astrometry::Ptr doMeasure(Image const& im, Peak const&);
 };
 
-ASTROMETRY_BOILERPLATE("naive", Naive)
-
 /**
  * Process the image; calculate values
  */
 Astrometry::Ptr NaiveAstrometry::doMeasure(Image const&, Peak const& peak) {
     // Here is the real work, hiding in a comment
     return boost::make_shared<NaiveAstrometry>(peak.getX(), 0.0, peak.getY(), 0.0);
+}
+
+/************************************************************************************************************/
+/**
+ * Declare the existence of a "naive" algorithm
+ */
+volatile bool isInstance[] = {
+    MeasureAstrometry::declare("naive", &NaiveAstrometry::doMeasure)
+};
 }

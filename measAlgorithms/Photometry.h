@@ -3,6 +3,7 @@
 
 #include "Measurement.h"
 #include "Image.h"
+#include "Peak.h"
 
 /**
  * A version of Measurement designed to support Photometry
@@ -43,29 +44,9 @@ public:
 
     virtual std::ostream &output(std::ostream &os) const;
 };
-
 /**
- * A class that actually does the work of measuring things
- *
- * More precisely, a base class whose subclasses do the real work.  The main purpose of MeasurePhotometry is
- * to provide the FactoryPtr typedef, and also to hide MeasureQuantity<Photometry::Ptr, Image>. Note that
- * MeasureQuantity knows nothing about Image classes
+ * Here's the object that remembers and can execute our choice of photometric algorithms
  */
-class MeasurePhotometry : public MeasureQuantity<Photometry::Ptr, Image>
-{
-public:
-    typedef boost::shared_ptr<MeasurePhotometry> Ptr;
-    typedef MeasureQuantity<Photometry::Ptr, Image> *FactoryPtr;
-
-    MeasurePhotometry() {}
-};
-
-/************************************************************************************************************/
-
-/*
- * Define a macro to provide all the per-algorithm boilerplate
- */
-#define PHOTOMETRY_BOILERPLATE(NAME, ALG) \
-    MEASUREMENT_BOILERPLATE(Photometry, NAME, ALG, (Image const& im, Peak const& peak), (im, peak))
+typedef MeasureQuantity<Photometry::Ptr, Image, Peak>  MeasurePhotometry;
 
 #endif

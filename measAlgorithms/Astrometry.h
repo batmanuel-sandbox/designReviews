@@ -3,6 +3,7 @@
 
 #include "Measurement.h"
 #include "Image.h"
+#include "Peak.h"
 
 /**
  * A version of Measurement designed to support Astrometry
@@ -47,28 +48,9 @@ public:
         return os << "(" << getX() << "+-" << getXErr() << ", " << getY() << "+-" << getYErr() << ")";
     }
 };
-
 /**
- * A class that actually does the work of measuring things
- *
- * More precisely, a base class whose subclasses do the real work.  The main purpose of MeasureAstrometry is
- * to provide the FactoryPtr typedef, and also to hide MeasureQuantity<Astrometry::Ptr, Image>. Note that
- * MeasureQuantity knows nothing about Image classes
+ * Here's the object that remembers and can execute our choice of astrometric algorithms
  */
-class MeasureAstrometry : public MeasureQuantity<Astrometry::Ptr, Image>
-{
-public:
-    typedef boost::shared_ptr<MeasureAstrometry> Ptr;
-    typedef MeasureQuantity<Astrometry::Ptr, Image> *FactoryPtr;
-
-    MeasureAstrometry() {}
-};
-
-/************************************************************************************************************/
-/*
- * Define a macro to provide all the per-algorithm boilerplate
- */
-#define ASTROMETRY_BOILERPLATE(NAME, ALG) \
-    MEASUREMENT_BOILERPLATE(Astrometry, NAME, ALG, (Image const& im, Peak const& peak), (im, peak))
+typedef MeasureQuantity<Astrometry::Ptr, Image, Peak>  MeasureAstrometry;
 
 #endif

@@ -70,9 +70,9 @@ int main(int argc, char **argv) {
                 std::cout << "  Radius: " << aphotom->getRadius(0);
             }
         }
+#endif
         std::cout << std::endl << std::endl;
     }
-#endif
     //
     // Write out the first Source, using the schema
     //

@@ -9,7 +9,19 @@
  */
 #include "AperturePhotometry.h"
 
-PHOTOMETRY_BOILERPLATE("aper", Aperture)
+/************************************************************************************************************/
+/// Virtual function called by operator<< to dynamically dispatch the type to a stream
+std::ostream &AperturePhotometry::output(std::ostream &os ///< the output stream
+                                        ) const {
+    for (int i = 0; i != getNRadius(); ++i) {
+        os << "[R: " << getRadius(i) << "  " << getFlux(i) << "+=" << getFluxErr(i) << "]";
+        if (i + 1 != getNRadius()) {
+            os << " ";
+        }
+    }
+
+    return os;
+}
 
 /************************************************************************************************************/
 /**
@@ -29,15 +41,12 @@ Photometry::Ptr AperturePhotometry::doMeasure(Image const& im, Peak const&) {
 }
 
 /************************************************************************************************************/
-/// Virtual function called by operator<< to dynamically dispatch the type to a stream
-std::ostream &AperturePhotometry::output(std::ostream &os ///< the output stream
-                                        ) const {
-    for (int i = 0; i != getNRadius(); ++i) {
-        os << "[R: " << getRadius(i) << "  " << getFlux(i) << "+=" << getFluxErr(i) << "]";
-        if (i + 1 != getNRadius()) {
-            os << " ";
-        }
-    }
-
-    return os;
+/**
+ * Declare the existence of an "aper" algorithm
+ */
+namespace {
+    volatile bool isInstance[] = {
+        MeasurePhotometry::declare("aper", &AperturePhotometry::doMeasure)
+    };
 }
+

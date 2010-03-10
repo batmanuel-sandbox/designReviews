@@ -4,7 +4,6 @@
 #include <map>
 #include "boost/make_shared.hpp"
 
-#include "Peak.h"
 #include "Schema.h"
 
 /************************************************************************************************************/
@@ -243,13 +242,14 @@ std::ostream &operator<<(std::ostream &os, Measurement<T> const& v) {
  * Measure a quantity using a set of algorithms.  Each algorithm will fill one item in the returned
  * Values (a Measurement)
  */
-template<typename T, typename ImageT>
+template<typename T, typename ImageT, typename PeakT>
 class MeasureQuantity {
-private:
-    typedef std::map<std::string, MeasureQuantity *> AlgorithmList;
 public:
     typedef Measurement<typename T::element_type> Values;
-    typedef MeasureQuantity *(*makeMeasureQuantityFunc)();
+    typedef T (*makeMeasureQuantityFunc)(ImageT const&, PeakT const&);
+private:
+    typedef std::map<std::string, makeMeasureQuantityFunc> AlgorithmList;
+public:
 
     MeasureQuantity() : _algorithms() {}
     virtual ~MeasureQuantity() {}
@@ -261,16 +261,16 @@ public:
     ///
     void addAlgorithm(std::string const& name ///< The name of the algorithm
                      ) {
-        _algorithms[name] = _lookupAlgorithm(name)();
+        _algorithms[name] = _lookupAlgorithm(name);
     }
     /// Actually measure im using all requested algorithms, returning the result
     Values measure(ImageT const& im,    ///< the Image (or other object) to process
-                   Peak const& peak     ///< approximate position of object's centre
+                   PeakT const& peak     ///< approximate position of object's centre
                   ) {
         Values values;
 
         for (typename AlgorithmList::iterator ptr = _algorithms.begin(); ptr != _algorithms.end(); ++ptr) {
-            T val = ptr->second->doMeasure(im, peak);
+            T val = ptr->second(im, peak);
             val->getSchema()->setComponent(ptr->first); // name this type of measurement (e.g. psf)
             values.add(val);
         }
@@ -295,13 +295,13 @@ private:
                                                           makeMeasureQuantityFunc func);
     static makeMeasureQuantityFunc _lookupAlgorithm(std::string const& name);
     /// The unknown algorithm; used to allow _lookupAlgorithm use _registryWorker
-    static MeasureQuantity *_iefbr14() { return NULL; }
+    static T _iefbr14(ImageT const&, PeakT const &) { return T(); }
     //
     // Do the real work of measuring things
     //
     // Can't be pure virtual as we create a do-nothing MeasureQuantity which we then add to
     //
-    virtual T doMeasure(ImageT const&, Peak const&) {
+    virtual T doMeasure(ImageT const&, PeakT const&) {
         return T();
     }
 };
@@ -309,16 +309,17 @@ private:
 /**
  * Support the algorithm registry
  */
-template<typename T, typename ImageT>
-typename MeasureQuantity<T, ImageT>::makeMeasureQuantityFunc MeasureQuantity<T, ImageT>::_registryWorker(
+template<typename T, typename ImageT, typename PeakT>
+typename MeasureQuantity<T, ImageT, PeakT>::makeMeasureQuantityFunc
+MeasureQuantity<T, ImageT, PeakT>::_registryWorker(
         std::string const& name,
-        typename MeasureQuantity<T, ImageT>::makeMeasureQuantityFunc func
-                                                                                                        )
+        typename MeasureQuantity<T, ImageT, PeakT>::makeMeasureQuantityFunc func
+                                           )
 {
-    static typename MeasureQuantity<T, ImageT>::AlgorithmRegistry _registry;
+    static typename MeasureQuantity<T, ImageT, PeakT>::AlgorithmRegistry _registry;
 
     if (func == _iefbr14) {     // lookup func
-        typename MeasureQuantity<T, ImageT>::AlgorithmRegistry::const_iterator ptr = _registry.find(name);
+        typename MeasureQuantity<T, ImageT, PeakT>::AlgorithmRegistry::const_iterator ptr = _registry.find(name);
         if (ptr == _registry.end()) {
             throw std::runtime_error("Unknown algorithm " + name);
         }
@@ -334,10 +335,10 @@ typename MeasureQuantity<T, ImageT>::makeMeasureQuantityFunc MeasureQuantity<T, 
 /**
  * Register the factory function for a named algorithm
  */
-template<typename T, typename ImageT>
-bool MeasureQuantity<T, ImageT>::declare(
+template<typename T, typename ImageT, typename PeakT>
+bool MeasureQuantity<T, ImageT, PeakT>::declare(
         std::string const& name,
-        typename MeasureQuantity<T, ImageT>::makeMeasureQuantityFunc func
+        typename MeasureQuantity<T, ImageT, PeakT>::makeMeasureQuantityFunc func
                                         )
 {
     _registryWorker(name, func);
@@ -348,46 +349,11 @@ bool MeasureQuantity<T, ImageT>::declare(
 /**
  * Return the factory function for a named algorithm
  */
-template<typename T, typename ImageT>
-typename MeasureQuantity<T, ImageT>::makeMeasureQuantityFunc
-MeasureQuantity<T, ImageT>::_lookupAlgorithm(std::string const& name)
+template<typename T, typename ImageT, typename PeakT>
+typename MeasureQuantity<T, ImageT, PeakT>::makeMeasureQuantityFunc
+MeasureQuantity<T, ImageT, PeakT>::_lookupAlgorithm(std::string const& name)
 {
     return _registryWorker(name, _iefbr14);
 }
-
-/**
- * Provide the boilerplate required to support measuring quantities using a variety of algorithms
- *
- * Arguments are:
- *  @param QUANTITY              Class that is to be measured; e.g. Photometry
- *  @param NAME                  Name of algorithm; e.g. "model"
- *  @param ALG                   Name of class is ALG##QUANTITY; e.g. Model
- *  @param DO_MEASURE_TYPE_ARGS  Types/args s of the doMeasure member, including parens; e.g. (Image const& im)
- *  @param DO_MEASURE_ARGS       Arguments of the doMeasure member, including parens; e.g. (im)
- */
-#define MEASUREMENT_BOILERPLATE(QUANTITY, NAME, ALG, DO_MEASURE_TYPE_ARGS, DO_MEASURE_ARGS) \
-/** */ \
-/* Measure ALG##QUANTITY.  The real work is done by ALG##QUANTITY::doMeasure function */ \
-/* */ \
-class ALG##Measure##QUANTITY : public Measure##QUANTITY { \
-protected: \
-    QUANTITY::Ptr doMeasure DO_MEASURE_TYPE_ARGS { return ALG##QUANTITY::doMeasure DO_MEASURE_ARGS; } \
-}; \
- \
-/** */ \
-/* Wrap the constructor so we can register it by name */ \
-/* */ \
-Measure##QUANTITY::FactoryPtr make##ALG##Measure##QUANTITY() { \
-    return new ALG##Measure##QUANTITY(); \
-} \
- \
-/** */ \
-/* Declare the existence of an "NAME" algorithm */ \
-/* */ \
-namespace { \
-    volatile bool isInstance[] = { \
-        Measure##QUANTITY::declare(NAME, make##ALG##Measure##QUANTITY), \
-    }; \
-} \
 
 #endif
