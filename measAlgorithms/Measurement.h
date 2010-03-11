@@ -135,6 +135,8 @@ public:
      *
      * Note that all values are returned as double; use the (protected) templated form of get if you need more
      * control
+     *
+     * \sa getAsLong() to return as a long
      */
     double get(std::string const& name,        ///< the name within T
                std::string const& component="" ///< the name within the set of measurements
@@ -147,6 +149,8 @@ public:
      *
      * Note that all values are returned as double; use the (protected) templated form of get if you need more
      * control
+     *
+     * \sa getAsLong() to return as a long
      */
     double get(unsigned int i,                 ///< Index to set
                std::string const& name,        ///< the name within T

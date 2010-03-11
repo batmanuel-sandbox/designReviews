@@ -61,8 +61,7 @@ int main(int argc, char **argv) {
     //
     if (!v.empty()) {
         Photometry::Ptr photom = *v.begin();
-        std::cout << photom->getAlgorithm() << 
-            " flux: " << photom->getFlux() << " fluxErr: " << photom->get("fluxErr");
+        std::cout << "Psf flux:  " << photom->getFlux() << " fluxErr: " << photom->get("fluxErr");
 #if defined(APERTURE_PHOTOMETRY_H)
         {
             AperturePhotometry::Ptr aphotom = boost::dynamic_pointer_cast<AperturePhotometry>(photom);
