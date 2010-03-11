@@ -61,7 +61,8 @@ int main(int argc, char **argv) {
     //
     if (!v.empty()) {
         Photometry::Ptr photom = *v.begin();
-        std::cout << "flux: " << photom->getFlux() << " fluxErr: " << photom->get("fluxErr");
+        std::cout << photom->getAlgorithm() << 
+            " flux: " << photom->getFlux() << " fluxErr: " << photom->get("fluxErr");
 #if defined(APERTURE_PHOTOMETRY_H)
         {
             AperturePhotometry::Ptr aphotom = boost::dynamic_pointer_cast<AperturePhotometry>(photom);
@@ -71,8 +72,14 @@ int main(int argc, char **argv) {
             }
         }
 #endif
-        std::cout << std::endl << std::endl;
+        std::cout << std::endl;
     }
+    if (v.find("psf") != v.end()) {
+        Photometry::Ptr photom = *v.find("psf");
+        std::cout << photom->getAlgorithm() << 
+            " flux: " << photom->getFlux() << " fluxErr: " << photom->get("fluxErr") << std::endl;
+    }
+    std::cout << std::endl;
     //
     // Write out the first Source, using the schema
     //

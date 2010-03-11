@@ -46,6 +46,17 @@ public:
     const_iterator end() const {
         return _measuredValues.end();
     }
+    /// Return an iterator to the named algorithm
+    const_iterator find(std::string const&name // The name of the desired algorithm
+                 ) const {
+        for (typename Measurement::const_iterator ptr = begin(); ptr != end(); ++ptr) {
+            if ((*ptr)->getSchema()->getComponent() == name) {
+                return ptr;
+            }
+        }
+
+        return end();
+    }
     /// Add a (shared_pointer to) an individual measurement of type T
     void add(TPtr val) {
         _measuredValues.push_back(val);
@@ -74,6 +85,12 @@ public:
     void init() {
         defineSchema(_mySchema);
         resize(getSchema()->size());    // getSchema() is virtual, but this is called from most-derived ctor
+    }
+    /**
+     * Return the name of the algorithm used to measure this component
+     */
+    std::string const& getAlgorithm() const {
+        return getSchema()->getComponent();
     }
     /**
      * Return some Measurement's value as a double given its Schema
