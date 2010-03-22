@@ -56,8 +56,7 @@ int main(int argc, char **argv) {
     // Subclasses of Photometry need a cast to use the accessors that aren't in the base class
     // (This doesn't compile if you don't include a definition of AperturePhotometry)
     //
-    // Note that we can use get() to return a value as a double given its name;  the accessor
-    // functions can use a templated version of get to return the true type
+    // Note that we can use get() to return a value as a double given its name (or getAsLong).
     //
     if (!v.empty()) {
         Photometry::Ptr photom = *v.begin();
