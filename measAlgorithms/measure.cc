@@ -10,23 +10,25 @@
 
 #include "AperturePhotometry.h"
 
+typedef float PixelT;
+
 /************************************************************************************************************/
 //
 // Usage: ./main type [type ...]  where type is one of "aper", "psf", and "model"
 //
 int main(int argc, char **argv) {
     // Create our astrometric measuring object
-    MeasureAstrometry *measureAstro = new MeasureAstrometry();
+    MeasureAstrometry<PixelT> *measureAstro = new MeasureAstrometry<PixelT>();
     measureAstro->addAlgorithm("naive");
 
     // Create our photometric measuring object based on argv
-    MeasurePhotometry *measurePhoto = new MeasurePhotometry();
+    MeasurePhotometry<PixelT> *measurePhoto = new MeasurePhotometry<PixelT>();
     
     for (int i = 1; i != argc; ++i) {
         measurePhoto->addAlgorithm(argv[i]);
     }
     // Measure the data and retrieve the answers
-    Image im = 1.0;
+    Image<PixelT> im = 1.0;
 
     std::vector<Source::Ptr> sources;
 

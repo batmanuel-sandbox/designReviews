@@ -51,6 +51,9 @@ public:
 /**
  * Here's the object that remembers and can execute our choice of astrometric algorithms
  */
-typedef MeasureQuantity<Astrometry::Ptr, Image, Peak>  MeasureAstrometry;
+template<typename T>
+class MeasureAstrometry : public MeasureQuantity<Astrometry::Ptr, Image<T>, Peak> {
+};
+
 
 #endif

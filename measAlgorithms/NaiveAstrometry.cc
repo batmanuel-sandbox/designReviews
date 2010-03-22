@@ -26,13 +26,15 @@ public:
         Astrometry::defineSchema(schema);
     }
 
-    static Astrometry::Ptr doMeasure(Image const& im, Peak const&);
+    template<typename T>
+    static Astrometry::Ptr doMeasure(Image<T> const& im, Peak const&);
 };
 
 /**
  * Process the image; calculate values
  */
-Astrometry::Ptr NaiveAstrometry::doMeasure(Image const&, Peak const& peak) {
+template<typename T>
+Astrometry::Ptr NaiveAstrometry::doMeasure(Image<T> const&, Peak const& peak) {
     // Here is the real work, hiding in a comment
     return boost::make_shared<NaiveAstrometry>(peak.getX(), 0.0, peak.getY(), 0.0);
 }
@@ -42,6 +44,7 @@ Astrometry::Ptr NaiveAstrometry::doMeasure(Image const&, Peak const& peak) {
  * Declare the existence of a "naive" algorithm
  */
 volatile bool isInstance[] = {
-    MeasureAstrometry::declare("naive", &NaiveAstrometry::doMeasure)
+    MeasureAstrometry<float>::declare("naive", &NaiveAstrometry::doMeasure),
+    MeasureAstrometry<double>::declare("naive", &NaiveAstrometry::doMeasure)
 };
 }

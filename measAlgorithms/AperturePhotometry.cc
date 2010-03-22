@@ -27,7 +27,8 @@ std::ostream &AperturePhotometry::output(std::ostream &os ///< the output stream
 /**
  * Process the image; calculate values
  */
-Photometry::Ptr AperturePhotometry::doMeasure(Image const& im, Peak const&) {
+template<typename T>
+Photometry::Ptr AperturePhotometry::doMeasure(Image<T> const& im, Peak const&) {
     /// Measure your fluxes here
     std::vector<float> rad(AperturePhotometry::NRADIUS);
     std::vector<double> flux(AperturePhotometry::NRADIUS);
@@ -46,7 +47,7 @@ Photometry::Ptr AperturePhotometry::doMeasure(Image const& im, Peak const&) {
  */
 namespace {
     volatile bool isInstance[] = {
-        MeasurePhotometry::declare("aper", &AperturePhotometry::doMeasure)
+        MeasurePhotometry<float>::declare("aper", &AperturePhotometry::doMeasure),
+        MeasurePhotometry<double>::declare("aper", &AperturePhotometry::doMeasure)
     };
 }
-

@@ -23,13 +23,15 @@ public:
         Photometry::defineSchema(schema);
     }
 
-    static Photometry::Ptr doMeasure(Image const& im, Peak const&);
+    template<typename T>
+    static Photometry::Ptr doMeasure(Image<T> const& im, Peak const&);
 };
 
 /**
  * Process the image; calculate values
  */
-Photometry::Ptr PsfPhotometry::doMeasure(Image const& im, Peak const&) {
+template<typename T>
+Photometry::Ptr PsfPhotometry::doMeasure(Image<T> const& im, Peak const&) {
     // Here is the real work, hiding in a comment
     return boost::make_shared<PsfPhotometry>(3*im);
 }
@@ -40,6 +42,7 @@ Photometry::Ptr PsfPhotometry::doMeasure(Image const& im, Peak const&) {
  */
 namespace {
     volatile bool isInstance[] = {
-        MeasurePhotometry::declare("psf", &PsfPhotometry::doMeasure)
+        MeasurePhotometry<float>::declare("psf", &PsfPhotometry::doMeasure),
+        MeasurePhotometry<double>::declare("psf", &PsfPhotometry::doMeasure)
     };
 }

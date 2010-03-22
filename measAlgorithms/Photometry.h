@@ -47,6 +47,8 @@ public:
 /**
  * Here's the object that remembers and can execute our choice of photometric algorithms
  */
-typedef MeasureQuantity<Photometry::Ptr, Image, Peak>  MeasurePhotometry;
+template<typename T>
+class MeasurePhotometry : public MeasureQuantity<Photometry::Ptr, Image<T>, Peak> {
+};
 
 #endif
