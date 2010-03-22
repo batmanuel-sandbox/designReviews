@@ -227,7 +227,14 @@ private:
           case Schema::INT:
             return static_cast<U>(boost::any_cast<int>(val));
           case Schema::LONG:
+#if defined(__ICC)
+#pragma warning (push)
+#pragma warning (disable: 2259)          // conversion from "long" to "double" may lose significant bits
+#endif
             return static_cast<U>(boost::any_cast<long>(val));
+#if defined(__ICC)
+#pragma warning (pop)
+#endif
           case Schema::FLOAT:
             return static_cast<U>(boost::any_cast<float>(val));
           case Schema::DOUBLE:
