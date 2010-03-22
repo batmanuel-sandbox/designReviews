@@ -27,16 +27,17 @@ std::ostream &AperturePhotometry::output(std::ostream &os ///< the output stream
 /**
  * Process the image; calculate values
  */
-template<typename T>
-Photometry::Ptr AperturePhotometry::doMeasure(Image<T> const& im, Peak const&) {
+template<typename ImageT>
+Photometry::Ptr AperturePhotometry::doMeasure(typename ImageT::ConstPtr im, Peak const&) {
     /// Measure your fluxes here
     std::vector<float> rad(AperturePhotometry::NRADIUS);
     std::vector<double> flux(AperturePhotometry::NRADIUS);
     std::vector<float> fluxErr(AperturePhotometry::NRADIUS);
 
-    rad[0] =       6.66; flux[0] = im;     fluxErr[0] = -1;
-    rad[1] = rad[0] + 1; flux[1] = 1.1*im; fluxErr[1] = -1;
-    rad[2] = rad[1] + 1; flux[2] = 1.2*im; fluxErr[2] = -1;
+    double const val = *im;
+    rad[0] =       6.66; flux[0] = val;     fluxErr[0] = -1;
+    rad[1] = rad[0] + 1; flux[1] = 1.1*val; fluxErr[1] = -1;
+    rad[2] = rad[1] + 1; flux[2] = 1.2*val; fluxErr[2] = -1;
 
     return boost::make_shared<AperturePhotometry>(rad, flux, fluxErr);
 }
@@ -45,9 +46,10 @@ Photometry::Ptr AperturePhotometry::doMeasure(Image<T> const& im, Peak const&) {
 /**
  * Declare the existence of an "aper" algorithm
  */
-namespace {
-    volatile bool isInstance[] = {
-        MeasurePhotometry<float>::declare("aper", &AperturePhotometry::doMeasure),
-        MeasurePhotometry<double>::declare("aper", &AperturePhotometry::doMeasure)
-    };
-}
+#define INSTANTIATE(TYPE) \
+    MeasurePhotometry<Image<TYPE> >::declare("aper", &AperturePhotometry::doMeasure<Image<TYPE> >)
+
+volatile bool isInstance[] = {
+    INSTANTIATE(float),
+    INSTANTIATE(double)
+};

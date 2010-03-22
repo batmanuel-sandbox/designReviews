@@ -267,12 +267,12 @@ template<typename T, typename ImageT, typename PeakT>
 class MeasureQuantity {
 public:
     typedef Measurement<typename T::element_type> Values;
-    typedef T (*makeMeasureQuantityFunc)(ImageT const&, PeakT const&);
+    typedef T (*makeMeasureQuantityFunc)(typename ImageT::ConstPtr, PeakT const&);
 private:
     typedef std::map<std::string, makeMeasureQuantityFunc> AlgorithmList;
 public:
 
-    MeasureQuantity() : _algorithms() {}
+    MeasureQuantity(typename ImageT::ConstPtr im) : _im(im), _algorithms() {}
     virtual ~MeasureQuantity() {}
 
     /// Include the algorithm called name in the list of measurement algorithms to use
@@ -285,13 +285,12 @@ public:
         _algorithms[name] = _lookupAlgorithm(name);
     }
     /// Actually measure im using all requested algorithms, returning the result
-    Values measure(ImageT const& im,    ///< the Image (or other object) to process
-                   PeakT const& peak     ///< approximate position of object's centre
+    Values measure(PeakT const& peak     ///< approximate position of object's centre
                   ) {
         Values values;
 
         for (typename AlgorithmList::iterator ptr = _algorithms.begin(); ptr != _algorithms.end(); ++ptr) {
-            T val = ptr->second(im, peak);
+            T val = ptr->second(_im, peak);
             val->getSchema()->setComponent(ptr->first); // name this type of measurement (e.g. psf)
             values.add(val);
         }
@@ -301,6 +300,10 @@ public:
 
     static bool declare(std::string const& name, makeMeasureQuantityFunc func);
 private:
+    //
+    // The data that we wish to measure
+    //
+    typename ImageT::ConstPtr _im;
     //
     // The list of algorithms that we wish to use
     //
@@ -316,13 +319,13 @@ private:
                                                           makeMeasureQuantityFunc func);
     static makeMeasureQuantityFunc _lookupAlgorithm(std::string const& name);
     /// The unknown algorithm; used to allow _lookupAlgorithm use _registryWorker
-    static T _iefbr14(ImageT const&, PeakT const &) { return T(); }
+    static T _iefbr14(typename ImageT::ConstPtr, PeakT const &) { return T(); }
     //
     // Do the real work of measuring things
     //
     // Can't be pure virtual as we create a do-nothing MeasureQuantity which we then add to
     //
-    virtual T doMeasure(ImageT const&, PeakT const&) {
+    virtual T doMeasure(typename ImageT::ConstPtr, PeakT const&) {
         return T();
     }
 };

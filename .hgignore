@@ -2,4 +2,7 @@ syntax: glob
 .sconf_temp
 .sconsign.dblite
 config.log
+
+# measAlgorithms
 measure
+Photometry-UML.pdf

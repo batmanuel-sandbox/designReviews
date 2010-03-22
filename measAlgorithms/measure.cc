@@ -10,44 +10,41 @@
 
 #include "AperturePhotometry.h"
 
-typedef float PixelT;
+typedef Image<float> ImageT;
 
 /************************************************************************************************************/
 //
 // Usage: ./main type [type ...]  where type is one of "aper", "psf", and "model"
 //
 int main(int argc, char **argv) {
+    ImageT::Ptr im (new ImageT(1.0));
+
     // Create our astrometric measuring object
-    MeasureAstrometry<PixelT> *measureAstro = new MeasureAstrometry<PixelT>();
+    MeasureAstrometry<ImageT> *measureAstro = new MeasureAstrometry<ImageT>(im);
     measureAstro->addAlgorithm("naive");
 
     // Create our photometric measuring object based on argv
-    MeasurePhotometry<PixelT> *measurePhoto = new MeasurePhotometry<PixelT>();
+    MeasurePhotometry<ImageT> *measurePhoto = new MeasurePhotometry<ImageT>(im);
     
     for (int i = 1; i != argc; ++i) {
         measurePhoto->addAlgorithm(argv[i]);
     }
     // Measure the data and retrieve the answers
-    Image<PixelT> im = 1.0;
-
     std::vector<Source::Ptr> sources;
 
     Source::Ptr s = boost::make_shared<Source>();
     {
         Peak peak(10, 20);
-        s->setAstrometry(measureAstro->measure(im, peak));
-        s->setPhotometry(measurePhoto->measure(im, peak));
+        s->setAstrometry(measureAstro->measure(peak));
+        s->setPhotometry(measurePhoto->measure(peak));
     }
     sources.push_back(s);
 
-    Measurement<Photometry> const& v = s->getPhotometry();
-
-    im = 10;
     Source::Ptr s2 = boost::make_shared<Source>();
     {
         Peak peak(20, 100);
-        s2->setAstrometry(measureAstro->measure(im, peak));
-        s2->setPhotometry(measurePhoto->measure(im, peak));
+        s2->setAstrometry(measureAstro->measure(peak));
+        s2->setPhotometry(measurePhoto->measure(peak));
     }
     sources.push_back(s2);
 
@@ -60,6 +57,8 @@ int main(int argc, char **argv) {
     //
     // Note that we can use get() to return a value as a double given its name (or getAsLong).
     //
+    Measurement<Photometry> const& v = s->getPhotometry();
+
     if (!v.empty()) {
         Photometry::Ptr photom = *v.begin();
         std::cout << "Psf flux:  " << photom->getFlux() << " fluxErr: " << photom->get("fluxErr");

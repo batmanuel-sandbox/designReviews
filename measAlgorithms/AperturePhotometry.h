@@ -48,8 +48,8 @@ public:
         schema->add(SchemaEntry("radius",  RADIUS,   Schema::FLOAT,  NRADIUS, "arcsec"));
     }
 
-    template<typename T>
-    static Photometry::Ptr doMeasure(Image<T> const& im, Peak const&);
+    template<typename ImageT>
+    static Photometry::Ptr doMeasure(typename ImageT::ConstPtr im, Peak const&);
 
     /// Return the number of radii
     int getNRadius() const {

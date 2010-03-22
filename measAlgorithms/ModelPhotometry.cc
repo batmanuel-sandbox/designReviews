@@ -30,8 +30,8 @@ public:
         schema->add(SchemaEntry("sersic_n", SERSIC_N, Schema::INT));
     }
 
-    template<typename T>
-    static Photometry::Ptr doMeasure(Image<T> const& im, Peak const&);
+    template<typename ImageT>
+    static Photometry::Ptr doMeasure(typename ImageT::ConstPtr im, Peak const&);
 
     /// Virtual function called by operator<< to dynamically dispatch the type to a stream
     std::ostream &output(std::ostream &os ///< the output stream
@@ -45,18 +45,21 @@ public:
 /**
  * Process the image; calculate values
  */
-template<typename T>
-Photometry::Ptr ModelPhotometry::doMeasure(Image<T> const& im, Peak const&) {
+template<typename ImageT>
+Photometry::Ptr ModelPhotometry::doMeasure(typename ImageT::ConstPtr im, Peak const&) {
     // Burn CPU time here
-    return boost::make_shared<ModelPhotometry>(2*im, 0.2);
+    return boost::make_shared<ModelPhotometry>(2*(*im), 0.2);
 }
 
 /************************************************************************************************************/
 /**
  * Declare the existence of a "model" algorithm
  */
+#define INSTANTIATE(TYPE) \
+    MeasurePhotometry<Image<TYPE> >::declare("model", &ModelPhotometry::doMeasure<Image<TYPE> >)
+
 volatile bool isInstance[] = {
-    MeasurePhotometry<float>::declare("model", &ModelPhotometry::doMeasure),
-    MeasurePhotometry<double>::declare("model", &ModelPhotometry::doMeasure)
+    INSTANTIATE(float),
+    INSTANTIATE(double)
 };
 }

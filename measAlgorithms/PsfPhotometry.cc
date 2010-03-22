@@ -23,26 +23,29 @@ public:
         Photometry::defineSchema(schema);
     }
 
-    template<typename T>
-    static Photometry::Ptr doMeasure(Image<T> const& im, Peak const&);
+    template<typename ImageT>
+    static Photometry::Ptr doMeasure(typename ImageT::ConstPtr im, Peak const&);
 };
 
 /**
  * Process the image; calculate values
  */
-template<typename T>
-Photometry::Ptr PsfPhotometry::doMeasure(Image<T> const& im, Peak const&) {
+template<typename ImageT>
+Photometry::Ptr PsfPhotometry::doMeasure(typename ImageT::ConstPtr im, Peak const&) {
     // Here is the real work, hiding in a comment
-    return boost::make_shared<PsfPhotometry>(3*im);
+    return boost::make_shared<PsfPhotometry>(3*(*im));
 }
 
 /************************************************************************************************************/
 /**
  * Declare the existence of an "psf" algorithm
  */
+#define INSTANTIATE(TYPE) \
+    MeasurePhotometry<Image<TYPE> >::declare("psf", &PsfPhotometry::doMeasure<Image<TYPE> >)
+
 namespace {
     volatile bool isInstance[] = {
-        MeasurePhotometry<float>::declare("psf", &PsfPhotometry::doMeasure),
-        MeasurePhotometry<double>::declare("psf", &PsfPhotometry::doMeasure)
+        INSTANTIATE(float),
+        INSTANTIATE(double)
     };
 }
